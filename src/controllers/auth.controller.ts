@@ -16,11 +16,16 @@ export const register = async (req: Request, res: Response) => {
         res.status(400).json({ error: "Invalid role" });
         return;
     }
+    const existingUser = await prisma.user.findUnique({ where: { name } });
+    if (existingUser){
+        res.status(401).json({ error: `User named ${name} already exists` });
+        return;
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     try {
-        const user = await prisma.user.create({
+        const newUser = await prisma.user.create({
             data: { name, password: hashedPassword, role },
         });
         res.status(201).json({ message: "User registered successfully" });

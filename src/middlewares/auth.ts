@@ -22,6 +22,7 @@ export const authorize = (roles: string[]) => {
         res.status(403).json({ error: "Forbidden" });
         return;
       }
+      req.body.userId = userId;
 
       next();
     }
